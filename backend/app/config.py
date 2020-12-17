@@ -4,16 +4,21 @@ from typing import ClassVar
 
 from dotenv import load_dotenv
 
-parent_dir = Path(__file__).parent
-backend_dir = parent_dir.parent
-load_dotenv(backend_dir / ".env")
+if "DOT_ENV_DIRECTORY" in os.environ:
+    dot_env_directory = Path(os.environ["DOT_ENV_DIRECTORY"])
+else:
+    parent_directory = Path(__file__).parent
+    backend_directory = parent_directory.parent
+    dot_env_directory = backend_directory
+
+load_dotenv(dot_env_directory / ".env")
 
 
 class Config:
 
     # Flask
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    FLASK_APP = os.environ.get("FLASK_APP", parent_dir.name)
+    FLASK_APP = os.environ.get("FLASK_APP", parent_directory.name)
     FLASK_ENV = os.environ.get("FLASK_ENV")
 
     # Database
@@ -35,9 +40,9 @@ class ProductionConfig(Config):
 
 
 def get_config_by_current_environment() -> ClassVar[Config]:
-    from utils import environment_utils
+    from utils import environment
 
-    return environment_utils.value_by_environment(
+    return environment.value_by_environment(
         production=ProductionConfig,
         staging=DevelopmentConfig,
         development=DevelopmentConfig,
