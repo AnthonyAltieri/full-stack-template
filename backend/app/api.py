@@ -2,7 +2,6 @@ import json
 
 import flask_restful
 from flask import make_response
-
 from json_encoder import JSONEncoderWithDateLikeSupport
 
 
